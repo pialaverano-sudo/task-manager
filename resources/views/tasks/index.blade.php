@@ -186,6 +186,7 @@
             background: #fafcff;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             gap: 20px;
         }
 
@@ -211,6 +212,13 @@
             color: #64748b;
         }
 
+        .task-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .status {
             align-self: flex-start;
             padding: 7px 12px;
@@ -228,6 +236,47 @@
         .completed {
             background: #dcfce7;
             color: #166534;
+        }
+
+        .action-button {
+            border: none;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .edit-button {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .edit-button:hover {
+            background: #bfdbfe;
+        }
+
+        .delete-button {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .delete-button:hover {
+            background: #fecaca;
+        }
+
+        .status-select {
+            width: auto;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .delete-form,
+        .status-form {
+            margin: 0;
         }
 
         .empty {
@@ -248,6 +297,16 @@
             padding: 10px;
         }
 
+        @media (max-width: 800px) {
+            .task {
+                flex-direction: column;
+            }
+
+            .task-actions {
+                width: 100%;
+            }
+        }
+
         @media (max-width: 700px) {
             .header h1 {
                 font-size: 28px;
@@ -265,12 +324,12 @@
                 grid-column: auto;
             }
 
-            .task {
-                flex-direction: column;
-            }
-
             .card {
                 padding: 20px;
+            }
+
+            .task-actions {
+                align-items: flex-start;
             }
         }
     </style>
@@ -429,10 +488,63 @@
 
                             </div>
 
-                            <div>
+                            <div class="task-actions">
+
                                 <span class="status {{ $task->status === 'Completed' ? 'completed' : 'pending' }}">
                                     {{ $task->status }}
                                 </span>
+
+                                <a
+                                    href="{{ route('tasks.edit', $task->id) }}"
+                                    class="action-button edit-button"
+                                >
+                                    Edit
+                                </a>
+
+                                <form
+                                    action="{{ route('tasks.destroy', $task->id) }}"
+                                    method="POST"
+                                    class="delete-form"
+                                    onsubmit="return confirm('Are you sure you want to delete this task?');"
+                                >
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit" class="action-button delete-button">
+                                        Delete
+                                    </button>
+                                </form>
+
+                                <form
+                                    action="{{ route('tasks.status', $task->id) }}"
+                                    method="POST"
+                                    class="status-form"
+                                >
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <select
+                                        name="status"
+                                        onchange="this.form.submit()"
+                                        class="status-select"
+                                    >
+                                        <option
+                                            value="Pending"
+                                            {{ $task->status === 'Pending' ? 'selected' : '' }}
+                                        >
+                                            Pending
+                                        </option>
+
+                                        <option
+                                            value="Completed"
+                                            {{ $task->status === 'Completed' ? 'selected' : '' }}
+                                        >
+                                            Completed
+                                        </option>
+                                    </select>
+
+                                </form>
+
                             </div>
 
                         </div>
@@ -444,9 +556,13 @@
             @else
 
                 <div class="empty">
+
                     <div class="empty-icon">📝</div>
+
                     <strong>No tasks yet</strong>
+
                     <p>Add your first task above to get started.</p>
+
                 </div>
 
             @endif
