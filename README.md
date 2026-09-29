@@ -32,3 +32,14 @@ Personal Task Manager is a Laravel web application for managing personal tasks. 
 - CSS
 - JavaScript
 - Docker
+
+  ## Screenshots
+
+### Task Manager Home
+![Task Manager Home](task-manager-home.jpg)
+
+### Pending Task
+![Pending Task](Task%20manager%20Pending.jpg)
+
+### Completed Task
+![Completed Task](Task%20manager%20Completed.jpg)
